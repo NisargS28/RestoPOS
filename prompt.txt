@@ -1,0 +1,109 @@
+Build a modern full-stack Restaurant POS (Point of Sale) web application similar to PetPooja, designed for small fast-food shops and scalable to multi-branch franchise systems.
+
+Tech Stack:
+- Next.js (App Router)
+- React
+- Tailwind CSS for UI
+- PostgreSQL database (Supabase)
+- Prisma ORM
+
+Core Modules:
+
+1. Authentication & Roles:
+- Simple login system using email and password
+- Role-based access control with roles:
+  - ADMIN
+  - CASHIER
+  - KITCHEN
+- Redirect users based on role after login
+- Protect routes based on role
+
+2. Cashier Panel:
+- Display product menu (grid layout)
+- Add items to cart with quantity management
+- Show bill summary (items, quantity, total amount)
+- Select payment mode (CASH / UPI / CARD)
+- Place order button
+
+Order flow:
+- On placing order:
+  - Save order in database
+  - Save order_items
+  - Generate unique order number
+  - Set status = PENDING
+  - Clear cart
+
+3. Kitchen Screen:
+- Display incoming orders in real-time (use polling every 2–3 seconds)
+- Show:
+  - Order number
+  - Items and quantity
+  - Time since order created
+- Allow status update:
+  - PENDING → PREPARING → READY → COMPLETED
+- Large, clean UI suitable for kitchen environment
+
+4. Product Management (Cashier access):
+- Add product (name, price, category)
+- Edit product
+- Toggle active/inactive (do not delete products)
+- Only active products appear in cashier menu
+
+5. Reports Module:
+- Daily sales report (total orders, total revenue)
+- Item-wise sales (most sold items)
+- Payment mode summary (cash, UPI, card)
+
+6. Expenses Module:
+- Cashier can add expenses (title, amount, category)
+- Used to calculate profit and loss
+
+Profit & Loss:
+- Profit = Total Sales - Total Expenses
+
+7. Multi-Branch Support (Admin Panel):
+- Admin can manage multiple branches
+- Each branch has:
+  - Separate products
+  - Separate orders
+  - Separate reports
+- Admin can view:
+  - All branches
+  - Combined analytics
+  - Branch-wise reports
+
+Database Design Requirements:
+- Use relational schema with proper foreign keys
+- Tables:
+  - users
+  - products
+  - orders
+  - order_items
+  - expenses
+  - branches
+  - restaurants (optional for franchise level)
+- Include branch_id in relevant tables
+
+Important Rules:
+- Use PostgreSQL (NOT MongoDB)
+- Use clean, modular API routes
+- Do not overengineer authentication initially
+- Use polling for real-time updates (no WebSockets initially)
+- Ensure data consistency for financial calculations
+- Keep UI fast, minimal, and practical (not fancy)
+
+UI/UX Requirements:
+- Fast and responsive interface
+- Large buttons for cashier and kitchen
+- Minimal clicks to place order
+- Clear visual hierarchy
+- Light theme with modern bright colors
+
+Future-ready considerations:
+- Structure code so it can support:
+  - UrbanPiper integration (Zomato/Swiggy)
+  - Offline-first capability
+  - SaaS multi-tenant architecture
+
+Goal:
+Build a production-ready MVP that can be used in a real fast-food shop, with clean architecture and scalability for enterprise use.

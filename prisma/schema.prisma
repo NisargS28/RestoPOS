@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Branch ──────────────────────────────────────────────────
+model Branch {
+  id        String    @id @default(uuid())
+  name      String
+  address   String?
+  isActive  Boolean   @default(true)
+  users     User[]
+  categories Category[]
+  products  Product[]
+  orders    Order[]
+  expenses  Expense[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ─── Auth & Roles ────────────────────────────────────────────
+model User {
+  id        String   @id @default(uuid())
+  authId    String   @unique       // Supabase Auth uid
+  email     String   @unique
+  name      String
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    String
+  branch    Branch?  @relation(fields: [branchId], references: [id])
+  branchId  String?                // null = super admin (all branches)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique  // SUPER_ADMIN, BRANCH_ADMIN, CASHIER, KITCHEN
+  permissions Permission[] @relation("RolePermissions")
+  users       User[]
+  createdAt   DateTime     @default(now())
+}
+
+model Permission {
+  id     String @id @default(uuid())
+  action String @unique  // e.g. "manage_menu", "view_reports", "manage_expenses"
+  roles  Role[] @relation("RolePermissions")
+}
+
+// ─── Menu ────────────────────────────────────────────────────
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  branchId  String
+  branch    Branch    @relation(fields: [branchId], references: [id])
+  products  Product[]
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id         String      @id @default(uuid())
+  name       String
+  price      Float
+  categoryId String
+  category   Category    @relation(fields: [categoryId], references: [id])
+  branchId   String
+  branch     Branch      @relation(fields: [branchId], references: [id])
+  isActive   Boolean     @default(true)
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+// ─── Orders ──────────────────────────────────────────────────
+model Order {
+  id          String      @id @default(uuid())
+  orderNumber String      @unique
+  status      String      @default("PENDING") // PENDING, PREPARING, READY, COMPLETED
+  total       Float
+  branchId    String
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float   // Price at the time of order
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+// ─── Expenses ────────────────────────────────────────────────
+model Expense {
+  id            String   @id @default(uuid())
+  date          DateTime
+  category      String   // "Raw Materials", "Salaries", etc.
+  description   String
+  amount        Float
+  branchId      String
+  branch        Branch   @relation(fields: [branchId], references: [id])
+  paymentMethod String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
