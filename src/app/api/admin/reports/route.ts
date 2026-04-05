@@ -140,7 +140,7 @@ export async function GET(request: Request) {
     for (let h = 6; h <= 23; h++) {
       hourly.push({
         hour: `${h.toString().padStart(2, "0")}:00`,
-        orders: todayOrders.filter((o) => o.createdAt.getHours() === h).length,
+        orders: todayOrders.filter((o: { createdAt: Date }) => o.createdAt.getHours() === h).length,
       });
     }
 
@@ -174,7 +174,7 @@ export async function GET(request: Request) {
       recentOrders: recentOrders.map((o) => ({
         id: o.orderNumber,
         branch: o.branch.name,
-        items: o.items.reduce((s: number, i) => s + i.quantity, 0),
+        items: o.items.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0),
         total: o.total,
         status: o.status,
         time: o.createdAt.toLocaleTimeString("en-IN", {
