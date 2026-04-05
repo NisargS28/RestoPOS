@@ -102,7 +102,7 @@ export async function GET(request: Request) {
 
     // ── Branch stats ──
     const branchStats = await Promise.all(
-      branches.map(async (branch) => {
+      branches.map(async (branch: { id: string; name: string }) => {
         const branchOrders = await prisma.order.findMany({
           where: {
             branchId: branch.id,
