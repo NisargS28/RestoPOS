@@ -171,7 +171,7 @@ export async function GET(request: Request) {
       topProducts,
       branches: branchStats,
       hourly,
-      recentOrders: recentOrders.map((o) => ({
+      recentOrders: recentOrders.map((o: any) => ({
         id: o.orderNumber,
         branch: o.branch.name,
         items: o.items.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0),
