@@ -36,7 +36,7 @@ export async function GET() {
       "manage_settings",
     ];
     await prisma.permission.createMany({
-      data: permissions.map((action) => ({ action })),
+      data: permissions.map((action: any) => ({ action })),
     });
 
     // Link all permissions to SUPER_ADMIN
@@ -45,7 +45,7 @@ export async function GET() {
       where: { id: superAdmin.id },
       data: {
         permissions: {
-          connect: allPerms.map((p) => ({ id: p.id })),
+          connect: allPerms.map((p: any) => ({ id: p.id })),
         },
       },
     });
@@ -79,7 +79,7 @@ export async function GET() {
 
     // ── Create Products for Branch 1 ──
     const b1Categories = await prisma.category.findMany({ where: { branchId: branch1.id } });
-    const catMap = new Map(b1Categories.map((c) => [c.name, c.id]));
+    const catMap = new Map(b1Categories.map((c: any) => [c.name, c.id]));
 
     const menuItems = [
       { name: "Margherita Pizza", price: 299, cat: "Pizza" },
@@ -123,7 +123,7 @@ export async function GET() {
     // Clone products to branch2 and branch3
     for (const branch of [branch2, branch3]) {
       const branchCats = await prisma.category.findMany({ where: { branchId: branch.id } });
-      const bCatMap = new Map(branchCats.map((c) => [c.name, c.id]));
+      const bCatMap = new Map(branchCats.map((c: any) => [c.name, c.id]));
 
       for (const item of menuItems) {
         const categoryId = bCatMap.get(item.cat);
