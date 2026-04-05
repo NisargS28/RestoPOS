@@ -65,9 +65,9 @@ export async function GET(request: Request) {
       orders: d.orders,
     }));
 
-    const totalRevenue = daily.reduce((s, d) => s + d.revenue, 0);
-    const totalCost = daily.reduce((s, d) => s + d.cost, 0);
-    const totalOrders = daily.reduce((s, d) => s + d.orders, 0);
+    const totalRevenue = daily.reduce((s: number, d) => s + d.revenue, 0);
+    const totalCost = daily.reduce((s: number, d) => s + d.cost, 0);
+    const totalOrders = daily.reduce((s: number, d) => s + d.orders, 0);
 
     // ── Top products ──
     const orderItems = await prisma.orderItem.findMany({
@@ -111,7 +111,7 @@ export async function GET(request: Request) {
           },
           select: { total: true },
         });
-        const revenue = branchOrders.reduce((s, o) => s + o.total, 0);
+        const revenue = branchOrders.reduce((s: number, o: { total: number }) => s + o.total, 0);
         const cost = Math.round(revenue * 0.45);
         const ordCount = branchOrders.length;
         return {
@@ -174,7 +174,7 @@ export async function GET(request: Request) {
       recentOrders: recentOrders.map((o) => ({
         id: o.orderNumber,
         branch: o.branch.name,
-        items: o.items.reduce((s, i) => s + i.quantity, 0),
+        items: o.items.reduce((s: number, i) => s + i.quantity, 0),
         total: o.total,
         status: o.status,
         time: o.createdAt.toLocaleTimeString("en-IN", {
